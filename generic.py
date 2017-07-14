@@ -5,12 +5,7 @@ class QuickTerm(Gtk.Window):
 #Destroy function a.k.a. closing the window function
     def destroy (self, widget):
         Gtk.main_quit()
-#Toolbar functions
-    def blue_initial(self,widget):
-        self.command="sh /usr/share/initial.sh"
-        self.length = len(self.command)
-        self.vte.feed_child(self.command, self.length)
-                
+        
     def copy(self, widget):
         self.vte.copy_clipboard()
         self.vte.grab_focus()
