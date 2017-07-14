@@ -5,7 +5,7 @@ This is the generic version of Quick Terminal without any PostX Gnu/Linux tools
 
 Copyright (c) 2017 JJ Posti <techtimejourney.net>”) Quick terminal is a terminal emulator written with Python. The program comes with ABSOLUTELY NO WARRANTY; for details see: http://www.gnu.org/copyleft/gpl.html. This is free software, and you are welcome to redistribute it under GPL Version 2, June 1991.
 
-This version of the Quick Terminal is the generic version. See Quick Terminal(PostX version) repository for the PostX integrated version.
+This version of the Quick Terminal is the generic version. See Quick Terminal(PostX version) repository for the PostX Gnu/Linux integrated version.
 
 Current Quick Terminal(generic) functionalities include right-click menu(Copy,paste,clear history,clear terminal and about).
 
