@@ -1,10 +1,11 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 from gi.repository import Gtk, Vte, Gdk, GLib
 import os, sys
 class QuickTerm(Gtk.Window):
 #Destroy function a.k.a. closing the window function
     def destroy (self, widget):
         Gtk.main_quit()
+
         
     def copy(self, widget):
         self.vte.copy_clipboard()
@@ -12,24 +13,13 @@ class QuickTerm(Gtk.Window):
         
     def paste(self, widget):
         self.vte.paste_clipboard()
-        self.vte.grab_focus()
-        
-    def clear_terminal(self,widget):
-        self.command="clear"
-        self.length = len(self.command)
-        self.vte.feed_child(self.command, self.length)
-                
-    def clear_history(self,widget):
-        self.command="history -c"
-        self.length = len(self.command)
-        self.vte.feed_child(self.command, self.length)
-		                                
+        self.vte.grab_focus()                                
 ###################################################################################
 #About dialog function
     def about1 (self, widget):
         about1 = Gtk.AboutDialog()
-        about1.set_program_name("Quick Terminal-Generic ")
-        about1.set_version("V.0.5.2-Generic")
+        about1.set_program_name("Quick Terminal-GTK3 ")
+        about1.set_version("V.0.6_arch-PostX")
         about1.set_copyright(" Copyright (c) 2017 JJ Posti <techtimejourney.net>")
         about1.set_comments("Quick terminal is a terminal emulator written with Python. The program comes with ABSOLUTELY NO WARRANTY; for details see: http://www.gnu.org/copyleft/gpl.html. This is free software, and you are welcome to redistribute it under GPL Version 2, June 1991.")
         about1.set_website("www.techtimejourney.net")
@@ -59,16 +49,6 @@ class QuickTerm(Gtk.Window):
         
         self.menu.append(self.copy_it)
         self.menu.append(self.paste_it)
-        
-        #Clear history & Clear Terminal
-        self.clear_his = Gtk.MenuItem("Clear history")
-        self.clear_his.connect("activate", self.clear_history)
-
-        self.clear_ter = Gtk.MenuItem("Clear terminal")
-        self.clear_ter.connect("activate", self.clear_terminal)
-        
-        self.menu.append(self.clear_his)
-        self.menu.append(self.clear_ter)
         
         #About Quick Terminal
         self.about_ter = Gtk.MenuItem("About Quick Terminal")
@@ -110,6 +90,17 @@ class QuickTerm(Gtk.Window):
         self.window1.set_resizable(True)
         self.window1.connect("destroy", Gtk.main_quit)
 
+class CSS():
+#CSS Styles
+        style_provider = Gtk.CssProvider()
+        css = open('/usr/share/Quick-Terminal/base.css', 'rb')
+        css_data = css.read()
+        css.close()
+        style_provider.load_from_data(css_data)
+        Gtk.StyleContext.add_provider_for_screen(
+            Gdk.Screen.get_default(),
+            style_provider,
+            Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION) 
 def main():
     Gtk.main()
     return 0
