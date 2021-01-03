@@ -5,7 +5,6 @@ class QuickTerm(Gtk.Window):
 #Destroy function a.k.a. closing the window function
     def destroy (self, widget):
         Gtk.main_quit()
-
         
     def copy(self, widget):
         self.vte.copy_clipboard()
@@ -19,7 +18,7 @@ class QuickTerm(Gtk.Window):
     def about1 (self, widget):
         about1 = Gtk.AboutDialog()
         about1.set_program_name("Quick Terminal-GTK3 ")
-        about1.set_version("V.0.6_arch-PostX")
+        about1.set_version("V.0.7")
         about1.set_copyright(" Copyright (c) 2017 JJ Posti <techtimejourney.net>")
         about1.set_comments("Quick terminal is a terminal emulator written with Python. The program comes with ABSOLUTELY NO WARRANTY; for details see: http://www.gnu.org/copyleft/gpl.html. This is free software, and you are welcome to redistribute it under GPL Version 2, June 1991.")
         about1.set_website("www.techtimejourney.net")
@@ -57,7 +56,7 @@ class QuickTerm(Gtk.Window):
 
 #Terminal
         self.vte = Vte.Terminal()
-        self.vte.connect ("child-exited", lambda term: Gtk.main_quit())
+        self.vte.connect ("child-exited", Gtk.main_quit)
 
 #Fork
         self.vte.spawn_sync(
@@ -93,7 +92,7 @@ class QuickTerm(Gtk.Window):
 class CSS():
 #CSS Styles
         style_provider = Gtk.CssProvider()
-        css = open('/usr/share/Quick-Terminal/base.css', 'rb')
+        css = open('/usr/share/base.css', 'rb')
         css_data = css.read()
         css.close()
         style_provider.load_from_data(css_data)
