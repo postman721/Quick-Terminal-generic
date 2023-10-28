@@ -9,8 +9,7 @@ Notable changes within this release:
     - Adding new styling.
     - Adding drag and drop support.
     - Fixing Gtk3 deprecation errors.
-    - Adding consistent warning dialogs, to prevent accidental closing.
-    - Adding icons in places of menus.
+    - Adding consistent warning dialogs,to prevent accidental closing.
     - Adding line numbering.
 
 ![screen](https://github.com/postman721/Quick-Terminal-generic/assets/29865797/b0df7d9d-615a-4d42-93f0-80a949a0a5f5)
