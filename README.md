@@ -1,16 +1,40 @@
-# Quick-Terminal-generic
-This is the generic version of Quick Terminal without any PostX Gnu/Linux tools
+Quick Terminal-GTK3
 
-![generic](https://user-images.githubusercontent.com/29865797/28220400-f99e251a-68c7-11e7-89fc-9084fa448019.jpg)
+A modern and lightweight GTK3-based terminal emulator with tab support and a stylish dark mode theme.
 
-Copyright (c) 2017 JJ Posti <techtimejourney.net>”) Quick terminal is a terminal emulator written with Python. The program comes with ABSOLUTELY NO WARRANTY; for details see: http://www.gnu.org/copyleft/gpl.html. This is free software, and you are welcome to redistribute it under GPL Version 2, June 1991.
+Screenshot of Quick Terminal-GTK3
 
-This version of the Quick Terminal is the generic version. See Quick Terminal(PostX version) repository for the PostX Gnu/Linux integrated version.
+Features
 
-Current Quick Terminal(generic) functionalities include right-click menu(Copy,paste,clear history,clear terminal and about).
+    Tab Support: Easily manage multiple terminal sessions in one window.
+    Drag & Drop: Drag files and directories into the terminal to use them.
+    Context Menu: Right-click to access commonly used functions like copy, paste, and open new tab.
+    Stylish Appearance: Dark mode theme for the terminal and buttons.
+    Customizable: Uses GTK, making it easy to theme and customize further.
 
-Dependencies:
+Dependencies
+General:
 
-The list below should be enough:
+    Python 3
+    GTK3
+    Vte 2.91
 
-python3 gir1.2-vte-2.91 python-gi python3-gi python-minimal python-gobject
+### Usage
+
+    Open a new tab: Double click on any tab. Entry to create new tab is also within the right-click menu.
+    Close a tab: Click the close button on the tab.
+    Copy & Paste: Right-click to open the context menu and select the copy or paste option.
+
+
+
+### Debian/Ubuntu as an example
+
+To install the dependencies on Debian or Ubuntu, use the following commands:
+
+
+
+sudo apt update
+sudo apt install python3 python3-gi gir1.2-gtk-3.0 gir1.2-vte-2.91
+
+Running: python3 terminal.py
+

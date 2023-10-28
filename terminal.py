@@ -1,109 +1,218 @@
 #!/usr/bin/env python3
+
+import os
+import gi
+gi.require_version('Gtk', '3.0')
+gi.require_version('Vte', '2.91')
 from gi.repository import Gtk, Vte, Gdk, GLib
-import os, sys
+
+def apply_css():
+    css_provider = Gtk.CssProvider()
+    css_data = """
+* {
+    background-color: #2a2a2a;  /* Dark gray almost black for the background */
+    color: #f5f5f5;  /* Off-white for text for better readability */
+    font-family: "Monospace";
+    border-radius: 6px;
+    transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out;  /* Smooth transition for hover effects */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);  /* Subtle shadow for depth */
+}
+
+button {
+    background-color: #444;
+    color: #f5f5f5;
+    border: 1px solid #777;
+    font-weight: 500;
+    padding: 2px;
+    margin: 2px;
+    min-width: 16px;
+    min-height: 16px;
+
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s ease-in-out;
+}
+
+button:hover {
+    background-color: #555;
+    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.25);
+}
+
+menuitem {
+    border-bottom: 1px solid #444;  /* subtle separation */
+    padding: 4px 8px;
+}
+
+menuitem:hover {
+    background-color: #ff5500;
+    color: #fff;  /* Pure white text on hover for contrast */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.25);
+}
+
+    """
+    css_provider.load_from_data(css_data.encode())
+    screen = Gdk.Screen.get_default()
+    style_context = Gtk.StyleContext()
+    style_context.add_provider_for_screen(screen, css_provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
+
+
 class QuickTerm(Gtk.Window):
-#Destroy function a.k.a. closing the window function
-    def destroy (self, widget):
-        Gtk.main_quit()
-        
+    def __init__(self):    
+        super().__init__()
+        self.set_position(Gtk.WindowPosition.CENTER)
+        self.set_title("Quick Terminal-GTK3")
+        self.connect("button-press-event", self.on_button_press_event)
+        # Menu
+        self.menu = Gtk.Menu()
+
+        # Menu buttons
+        self.copy_it = Gtk.MenuItem(label="Copy")
+        self.copy_it.connect("activate", self.copy)
+
+        self.paste_it = Gtk.MenuItem(label="Paste")
+        self.paste_it.connect("activate", self.paste)
+
+        self.new_tab_item = Gtk.MenuItem(label="New Tab")
+        self.new_tab_item.connect("activate", self.new_tab)
+
+        self.menu.append(self.copy_it)
+        self.menu.append(self.paste_it)
+        self.menu.append(self.new_tab_item)
+
+        # About Quick Terminal
+        self.about_ter = Gtk.MenuItem(label="About Quick Terminal")
+        self.about_ter.connect("activate", self.about1)
+        self.menu.append(self.about_ter)
+
+        # Create the Notebook for tabs
+        self.notebook = Gtk.Notebook()
+
+        # Initial terminal
+        term = self.create_terminal()
+        self.notebook.append_page(term, self.create_tab_label("Terminal", term))
+
+        self.add(self.notebook)
+        self.show_all()
+
+        self.set_resizable(True)
+        self.connect("destroy", Gtk.main_quit)
+
     def copy(self, widget):
-        self.vte.copy_clipboard()
-        self.vte.grab_focus()
-        
+        current_term = self.notebook.get_nth_page(self.notebook.get_current_page())
+        current_term.copy_clipboard()
+        current_term.grab_focus()
+
     def paste(self, widget):
-        self.vte.paste_clipboard()
-        self.vte.grab_focus()                                
-###################################################################################
-#About dialog function
-    def about1 (self, widget):
+        current_term = self.notebook.get_nth_page(self.notebook.get_current_page())
+        current_term.paste_clipboard()
+        current_term.grab_focus()
+
+    def about1(self, widget):
         about1 = Gtk.AboutDialog()
-        about1.set_program_name("Quick Terminal-GTK3 ")
-        about1.set_version("V.0.7")
-        about1.set_copyright(" Copyright (c) 2017 JJ Posti <techtimejourney.net>")
-        about1.set_comments("Quick terminal is a terminal emulator written with Python. The program comes with ABSOLUTELY NO WARRANTY; for details see: http://www.gnu.org/copyleft/gpl.html. This is free software, and you are welcome to redistribute it under GPL Version 2, June 1991.")
+        about1.set_program_name("Quick Terminal-GTK3")
+        about1.set_version("V.1.0")
+        about1.set_copyright("Copyright (c) 2017 JJ Posti <techtimejourney.net>")
+        about1.set_comments(("Quick terminal is a terminal emulator written with Python. "
+                             "The program comes with ABSOLUTELY NO WARRANTY; for details see: "
+                             "http://www.gnu.org/copyleft/gpl.html. This is free software, "
+                             "and you are welcome to redistribute it under GPL Version 2, June 1991."))
         about1.set_website("www.techtimejourney.net")
         about1.run()
         about1.destroy()
-#################################################Right click 
-    def right_click(self, widget, event):
-        if event.button == 3:
-            self.menu.show_all()            
+        
+
+    def on_drag_data_received(self, widget, drag_context, x, y, data, info, time):
+        uris = data.get_uris()
+        if uris:
+            try:
+                path = GLib.filename_from_uri(uris[0])[0]
+                if os.path.isdir(path):
+                    print("Dropped item is a folder.")
+                else:
+                    print("Dropped item is a file.")
+                widget.feed_child(f'"{path}"'.encode())
+            except Exception as e:
+                print(f"Error processing dropped item: {e}")
+            finally:
+                drag_context.finish(True, False, time)      
+
+
+    def close_tab(self, button, terminal_widget):
+        """Close the tab by using the terminal widget as a reference."""
+        if self.notebook.get_n_pages() == 1:  # If only one tab is open
+            return  # Don't close it
+        page_num = self.notebook.page_num(terminal_widget)
+        if page_num != -1:
+            self.notebook.remove_page(page_num)
+
+    def create_tab_label(self, title, terminal_widget):
+        """Create a custom tab label with a title and a close button."""
+        hbox = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=5)
+        label = Gtk.Label(label=title)
+
+        close_btn = Gtk.Button.new_from_icon_name("window-close", Gtk.IconSize.BUTTON)
+        close_btn.set_relief(Gtk.ReliefStyle.NONE)
+        close_btn.connect("clicked", self.close_tab, terminal_widget)
+
+        hbox.pack_start(label, True, True, 0)
+        hbox.pack_start(close_btn, False, False, 0)
+        hbox.show_all()
+        return hbox
+
+    def new_tab(self, widget):
+        term = self.create_terminal()
+        tab_label = self.create_tab_label("Terminal", term)
+        self.notebook.append_page(term, tab_label)
+        self.notebook.show_all()
+
+    def on_button_press_event(self, widget, event):
+        if event.button == 3:  # Right click
+            self.menu.show_all()
             self.menu.popup(None, None, None, None, 0, Gtk.get_current_event_time())
-############Make the window	
-    def __init__(self):    
-    # Create THE WINDOW
-        self.window1=Gtk.Window()
-        self.window1.set_position(Gtk.WindowPosition.CENTER)
-        self.window1.set_title("Quick Terminal-GTK3")
-        self.window1.connect("button_press_event", self.right_click)
-#Menu
-        self.menu=Gtk.Menu()
-#Menu buttons
-        #Copy&Paste
-        self.copy_it = Gtk.MenuItem("Copy")
-        self.copy_it.connect("activate", self.copy)
+        elif event.type == Gdk.EventType.DOUBLE_BUTTON_PRESS:        
+            self.new_tab(widget)
+            return True
 
-        self.paste_it = Gtk.MenuItem("Paste")
-        self.paste_it.connect("activate", self.paste)
-        
-        self.menu.append(self.copy_it)
-        self.menu.append(self.paste_it)
-        
-        #About Quick Terminal
-        self.about_ter = Gtk.MenuItem("About Quick Terminal")
-        self.about_ter.connect("activate", self.about1)
-        self.menu.append(self.about_ter)                          
 
-#Terminal
-        self.vte = Vte.Terminal()
-        self.vte.connect ("child-exited", Gtk.main_quit)
+    def create_terminal(self):
+        vte = Vte.Terminal()
+        vte.connect("child-exited", self.on_terminal_child_exited)
 
-#Fork
-        self.vte.spawn_sync(
-            Vte.PtyFlags.DEFAULT,
-            os.environ['HOME'],
-            ["/bin/bash"],
-            [],
-            GLib.SpawnFlags.DO_NOT_REAP_CHILD,
-            None,
-            None,
+        # Drag and drop
+        vte.drag_dest_set(Gtk.DestDefaults.ALL, [], Gdk.DragAction.COPY)
+        vte.drag_dest_add_uri_targets()
+        vte.connect("drag-data-received", self.on_drag_data_received)
+
+        # Setting background color and foreground (text) color for the terminal
+        vte.set_color_background(Gdk.RGBA(0.164, 0.164, 0.164, 1))  # RGBA values for #2a2a2a
+        vte.set_color_foreground(Gdk.RGBA(0.960, 0.960, 0.960, 1))  # RGBA values for #f5f5f5
+
+        try:
+            vte.spawn_async(
+                Vte.PtyFlags.DEFAULT,
+                os.environ['HOME'],
+                ["/bin/bash"],
+                None,
+                0,
+                None,
+                None,
+                -1,
+                None,
+                None
             )
-#Make a clipboard for copy and paste
-        self.clipboard = Gtk.Clipboard.get(Gdk.SELECTION_CLIPBOARD)
+        except Exception as e:
+            print(f"Error spawning terminal: {e}")
+        return vte
 
-#Scrolled window
-        self.scroll=Gtk.ScrolledWindow()
-        self.scroll.set_min_content_height(350)
-        self.scroll.set_min_content_width(640)
-        self.scroll.add(self.vte)
-
-#Vertical box/buttons container
-        self.vbox=Gtk.VBox(False)
-        self.vbox.pack_start(self.scroll, True, True, True)
-
-#Show everything		
-        self.window1.add(self.vbox)
-        self.window1.show_all()
-         
-#Making window resizable and enabling the close window connector        
-        self.window1.set_resizable(True)
-        self.window1.connect("destroy", Gtk.main_quit)
-
-class CSS():
-#CSS Styles
-        style_provider = Gtk.CssProvider()
-        css = open('/usr/share/base.css', 'rb')
-        css_data = css.read()
-        css.close()
-        style_provider.load_from_data(css_data)
-        Gtk.StyleContext.add_provider_for_screen(
-            Gdk.Screen.get_default(),
-            style_provider,
-            Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION) 
+    def on_terminal_child_exited(self, terminal, status):
+        """Close the tab when the terminal child process exits."""
+        page_num = self.notebook.page_num(terminal)
+        if page_num != -1:
+            self.notebook.remove_page(page_num)
 def main():
     Gtk.main()
     return 0
 
 if __name__ == "__main__":
+    apply_css()  # Apply CSS first
     QuickTerm()
     main()
