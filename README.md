@@ -2,7 +2,18 @@ Quick Terminal-GTK3
 
 A modern and lightweight GTK3-based terminal emulator with tab support and a stylish dark mode theme.
 
-Screenshot of Quick Terminal-GTK3
+Notable changes within this release:
+
+    - Adding: Tabs.
+    - Adding embedded CSS.
+    - Adding new styling.
+    - Adding drag and drop support.
+    - Fixing Gtk3 deprecation errors.
+    - Adding consistent warning dialogs, to prevent accidental closing.
+    - Adding icons in places of menus.
+    - Adding line numbering.
+
+![screen](https://github.com/postman721/Quick-Terminal-generic/assets/29865797/b0df7d9d-615a-4d42-93f0-80a949a0a5f5)
 
 Features
 
