@@ -203,11 +203,16 @@ class QuickTerm(Gtk.Window):
             print(f"Error spawning terminal: {e}")
         return vte
 
+
     def on_terminal_child_exited(self, terminal, status):
         """Close the tab when the terminal child process exits."""
         page_num = self.notebook.page_num(terminal)
         if page_num != -1:
             self.notebook.remove_page(page_num)
+            self.notebook.queue_draw()
+        # If no more pages left, quit the application
+        if self.notebook.get_n_pages() == 0:
+            Gtk.main_quit()    
 def main():
     Gtk.main()
     return 0
