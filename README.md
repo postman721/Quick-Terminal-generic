@@ -1,5 +1,7 @@
 Quick Terminal-GTK3
 
+Back on active development.
+
 A modern and lightweight GTK3-based terminal emulator with tab support and a stylish dark mode theme.
 
 Notable changes within this release:
