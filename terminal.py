@@ -10,42 +10,61 @@ def apply_css():
     css_provider = Gtk.CssProvider()
     css_data = """
 * {
-    background-color: #2a2a2a;  /* Dark gray almost black for the background */
-    color: #f5f5f5;  /* Off-white for text for better readability */
+    background-color: #1e1e1e;  /* Darker gray for background (still close to black) */
+    color: #d1d1d1;  /* Light gray text for better readability */
     font-family: "Monospace";
+    font-size: 12px;
     border-radius: 6px;
     transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out;  /* Smooth transition for hover effects */
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);  /* Subtle shadow for depth */
 }
 
 button {
-    background-color: #444;
-    color: #f5f5f5;
-    border: 1px solid #777;
+    background-color: #333;  /* Dark button background */
+    color: #d1d1d1;  /* Light gray text for buttons */
+    border: 1px solid #555;
     font-weight: 500;
-    padding: 2px;
+    padding: 4px 8px;
     margin: 2px;
     min-width: 16px;
     min-height: 16px;
-
+    border-radius: 4px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
     transition: all 0.3s ease-in-out;
 }
 
 button:hover {
-    background-color: #555;
+    background-color: #555;  /* Slightly lighter on hover */
     box-shadow: 0 6px 8px rgba(0, 0, 0, 0.25);
 }
 
 menuitem {
-    border-bottom: 1px solid #444;  /* subtle separation */
+    border-bottom: 1px solid #444;  /* Subtle separation */
     padding: 4px 8px;
 }
 
 menuitem:hover {
-    background-color: #ff5500;
-    color: #fff;  /* Pure white text on hover for contrast */
+    background-color: #444;  /* Darker hover background */
+    color: #fff;  /* White text on hover for contrast */
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.25);
+}
+
+GtkLabel {
+    color: #d1d1d1;  /* Light gray for labels */
+}
+
+GtkButton {
+    border-radius: 5px;  /* More rounded buttons */
+}
+
+GtkEntry {
+    background-color: #333;  /* Dark input fields */
+    color: #d1d1d1;  /* Light gray text */
+    border: 1px solid #555;
+}
+
+GtkEntry:focus {
+    border-color: #ff5500;  /* Highlight input field on focus */
 }
 
     """
