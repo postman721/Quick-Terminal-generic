@@ -38,15 +38,21 @@ button:hover {
     box-shadow: 0 6px 8px rgba(0, 0, 0, 0.25);
 }
 
-menuitem {
-    border-bottom: 1px solid #444;  /* Subtle separation */
-    padding: 4px 8px;
+.close-button {
+    background-color: #ff5500;  /* Custom orange color */
+    color: white;
+    border-radius: 50%;
+    font-weight: bold;
+    font-size: 14px;
+    min-width: 25px;
+    min-height: 25px;
+    padding: 0;
+    margin: 0;
 }
 
-menuitem:hover {
-    background-color: #444;  /* Darker hover background */
-    color: #fff;  /* White text on hover for contrast */
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.25);
+.close-button:hover {
+    background-color: #ff7700;  /* Slightly lighter orange on hover */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
 }
 
 GtkLabel {
@@ -67,6 +73,17 @@ GtkEntry:focus {
     border-color: #ff5500;  /* Highlight input field on focus */
 }
 
+/* New styles for menu items */
+menuitem {
+    border-bottom: 1px solid #444;  /* Subtle separation */
+    padding: 4px 8px;
+}
+
+menuitem:hover {
+    background-color: #444;  /* Darker hover background */
+    color: #fff;  /* White text on hover for contrast */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.25);
+}
     """
     css_provider.load_from_data(css_data.encode())
     screen = Gdk.Screen.get_default()
@@ -168,9 +185,14 @@ class QuickTerm(Gtk.Window):
         hbox = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=5)
         label = Gtk.Label(label=title)
 
-        close_btn = Gtk.Button.new_from_icon_name("window-close", Gtk.IconSize.BUTTON)
+        # Custom close button with text "X"
+        close_btn = Gtk.Button(label="X")
         close_btn.set_relief(Gtk.ReliefStyle.NONE)
+        close_btn.set_size_request(25, 25)  # Adjust the size of the button
         close_btn.connect("clicked", self.close_tab, terminal_widget)
+
+        # Customize button appearance (optional)
+        close_btn.get_style_context().add_class("close-button")
 
         hbox.pack_start(label, True, True, 0)
         hbox.pack_start(close_btn, False, False, 0)
@@ -232,6 +254,7 @@ class QuickTerm(Gtk.Window):
         # If no more pages left, quit the application
         if self.notebook.get_n_pages() == 0:
             Gtk.main_quit()    
+
 def main():
     Gtk.main()
     return 0
