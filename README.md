@@ -14,7 +14,9 @@ Notable changes within this release:
     - Adding consistent warning dialogs,to prevent accidental closing.
     - Adding line numbering.
 
-![screen](https://github.com/postman721/Quick-Terminal-generic/assets/29865797/b0df7d9d-615a-4d42-93f0-80a949a0a5f5)
+![Image](https://github.com/user-attachments/assets/69b3fbbd-e434-4c39-8f48-c9fef7099ffc)
+
+By default we use /bin/bash. For simplicity, using /bin/sh here.
 
 Features
 
